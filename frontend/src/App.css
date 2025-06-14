@@ -1,38 +1,78 @@
-.App {
+body {
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at top left, #0b0f1a, #050509);
+  color: #e0e0f0;
+  font-family: 'Fira Code', monospace;
+}
+
+.container {
+  max-width: 720px;
+  margin: 50px auto;
+  padding: 30px;
+  background: rgba(28, 32, 48, 0.95);
+  box-shadow: 0 0 30px rgba(0, 255, 204, 0.15);
+  border-radius: 14px;
+  border: 1px solid #1fe0d9;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+h1 {
+  font-size: 2rem;
+  margin-bottom: 25px;
+  color: #1fe0d9;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(31, 224, 217, 0.5);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+input[type="text"] {
+  width: 70%;
+  padding: 14px;
+  font-size: 16px;
+  border: 1px solid #2ef2e5;
+  border-radius: 8px;
+  background-color: #1b1f2f;
+  color: #e8faff;
+  outline: none;
+  margin-bottom: 10px;
+  transition: 0.3s ease;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+input[type="text"]:focus {
+  border-color: #00ffee;
+  box-shadow: 0 0 8px #00ffee55;
 }
 
-.App-link {
-  color: #61dafb;
+button {
+  padding: 12px 28px;
+  font-size: 16px;
+  background-color: #00ffee;
+  color: #090d16;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-left: 10px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+button:hover {
+  background-color: #0cf5dc;
+}
+
+.result {
+  margin-top: 25px;
+  text-align: left;
+  background-color: #161b28;
+  padding: 20px;
+  border-radius: 10px;
+  overflow-x: auto;
+  color: #c6f4ff;
+  font-family: 'Courier New', Courier, monospace;
+  border-left: 5px solid #00ffee;
+}
+
+.error {
+  color: #ff6b6b;
+  font-weight: bold;
+  margin-top: 12px;
 }
