@@ -1,70 +1,56 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState } from "react";
+import axios from "axios";
+import "./App.css"; // Optional: basic styling
 
-const API_URL = "https://your-app-name.onrender.com"; // Replace with actual Render URL
+function App() {
+  const [inputIP, setInputIP] = useState("");
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState("");
 
-const App = () => {
-  const [ip, setIp] = useState('');
-  const [data, setData] = useState(null);
-  const [filteredData, setFilteredData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const API_URL = "https://threat-intelligence-dashboard01.onrender.com";
 
-  // Fetch threat intelligence data
   const handleCheck = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const response = await axios.get(`${API_URL}/check_ip?ip=${ip}`);
-      setData(response.data);
-      filterThreats(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setError("Failed to fetch data. Please check your API.");
-    }
-    setLoading(false);
-  };
+    setResult(null);
+    setError("");
 
-  // Filter high-severity threats
-  const filterThreats = (data) => {
-    if (data.threats) {
-      const filtered = data.threats.filter(item => item.severity >= 7);
-      setFilteredData(filtered);
+    if (!inputIP) {
+      setError("Please enter an IP address.");
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${API_URL}/check_ip`, {
+        params: { ip: inputIP },
+      });
+      setResult(response.data);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch data from backend. Check console logs or CORS settings.");
     }
   };
 
   return (
-    <div className="container mt-4">
-      <h2 className="text-center">Threat Intelligence Lookup</h2>
-      <div className="input-group mb-3">
-        <input 
-          type="text" 
-          className="form-control"
-          placeholder="Enter IP Address" 
-          value={ip} 
-          onChange={(e) => setIp(e.target.value)} 
-        />
-        <button className="btn btn-primary" onClick={handleCheck}>Check</button>
-      </div>
+    <div className="container">
+      <h1>🛡️ Threat Intelligence Dashboard</h1>
 
-      {loading && <p className="text-center">Fetching data...</p>}
-      {error && <p className="text-danger text-center">{error}</p>}
+      <input
+        type="text"
+        placeholder="Enter IP address (e.g., 8.8.8.8)"
+        value={inputIP}
+        onChange={(e) => setInputIP(e.target.value)}
+      />
+      <button onClick={handleCheck}>Check</button>
 
-      {filteredData && (
-        <div>
-          <h4>High-Severity Threats</h4>
-          <ul className="list-group">
-            {filteredData.map((item, index) => (
-              <li className="list-group-item" key={index}>
-                <strong>{item.type}:</strong> {item.description} (Severity: {item.severity})
-              </li>
-            ))}
-          </ul>
+      {error && <p className="error">{error}</p>}
+
+      {result && (
+        <div className="result">
+          <h3>Lookup Result:</h3>
+          <pre>{JSON.stringify(result, null, 2)}</pre>
         </div>
       )}
     </div>
   );
-};
+}
 
 export default App;
