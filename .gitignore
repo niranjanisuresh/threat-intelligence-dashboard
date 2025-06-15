@@ -1,0 +1,12 @@
+# Node and React
+node_modules/
+.env
+
+# Python / Flask
+venv/
+__pycache__/
+*.pyc
+
+# OS & Editor junk
+.DS_Store
+.vscode/
