@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./App.css";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 
 function App() {
   const [inputIP, setInputIP] = useState("");
@@ -38,20 +38,19 @@ function App() {
     try {
       const [threatRes, geoRes] = await Promise.all([
         axios.get(`${API_URL}/check_ip`, { params: { ip: inputIP } }),
-        axios.get(`http://ip-api.com/json/${inputIP}`),
+        axios.get(`${API_URL}/geolocate?ip=${inputIP}`) // Proxied via Flask to avoid HTTPS/HTTP conflicts
       ]);
       setResult(threatRes.data.data);
       setGeoData(geoRes.data);
     } catch (err) {
       console.error(err);
-      setError("Error fetching data. Check the console for more info.");
+      setError("Error fetching data. Please check the IP and try again.");
     }
   };
 
   return (
     <div className="container">
       <h1>🛡️ Threat Intelligence Dashboard</h1>
-
       <input
         type="text"
         placeholder="Enter IP address"
@@ -59,7 +58,6 @@ function App() {
         onChange={(e) => setInputIP(e.target.value)}
       />
       <button onClick={handleCheck}>Check</button>
-
       {error && <p className="error">{error}</p>}
 
       {result && (
@@ -68,40 +66,40 @@ function App() {
           <p><strong>IP:</strong> {result.ipAddress}</p>
           <p><strong>Domain:</strong> {result.domain || "N/A"}</p>
           <p><strong>ISP:</strong> {geoData?.isp || "N/A"}</p>
-          <p><strong>Country:</strong> {geoData?.country} 
-            <img 
-              src={`https://flagcdn.com/24x18/${geoData?.countryCode.toLowerCase()}.png`} 
-              alt="flag"
-              style={{ marginLeft: 8, verticalAlign: "middle" }} 
-            />
+          <p><strong>Country:</strong> {geoData?.country}
+            {geoData?.countryCode && (
+              <img
+                src={`https://flagcdn.com/24x18/${geoData.countryCode.toLowerCase()}.png`}
+                alt="flag"
+                style={{ marginLeft: 8, verticalAlign: "middle" }}
+              />
+            )}
           </p>
           <p>
-            <strong>Abuse Confidence Score:</strong>{" "}
-            <span
-              style={{
-                fontWeight: "bold",
-                color: getThreatColor(result.abuseConfidenceScore),
-              }}
-            >
+            <strong>Abuse Score:</strong>{" "}
+            <span style={{ fontWeight: "bold", color: getThreatColor(result.abuseConfidenceScore) }}>
               {result.abuseConfidenceScore} ({getThreatLevel(result.abuseConfidenceScore)})
             </span>
           </p>
 
-          {geoData && geoData.lat && geoData.lon && (
+          {geoData?.lat && geoData?.lon && (
             <MapContainer
               center={[geoData.lat, geoData.lon]}
               zoom={5}
-              scrollWheelZoom={false}
               style={{ height: "300px", marginTop: "20px", borderRadius: "10px" }}
             >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <Marker position={[geoData.lat, geoData.lon]} icon={L.icon({ iconUrl: "https://cdn-icons-png.flaticon.com/512/252/252025.png", iconSize: [30, 30] })}>
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              <Marker
+                position={[geoData.lat, geoData.lon]}
+                icon={L.icon({
+                  iconUrl: "https://cdn-icons-png.flaticon.com/512/252/252025.png",
+                  iconSize: [30, 30]
+                })}
+              >
                 <Popup>
-                  IP: {inputIP}
+                  IP: {inputIP}  
                   <br />
-                  Country: {geoData?.country}
+                  Country: {geoData.country}
                 </Popup>
               </Marker>
             </MapContainer>

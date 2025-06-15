@@ -1,83 +1,76 @@
 body {
   margin: 0;
-  padding: 0;
-  background: radial-gradient(circle at top left, #0b0f1a, #050509);
-  color: #e0e0f0;
-  font-family: 'Fira Code', monospace;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f6f8fa;
+  color: #222;
 }
 
 .container {
-  max-width: 720px;
-  margin: 50px auto;
-  padding: 30px;
-  background: rgba(28, 32, 48, 0.95);
-  box-shadow: 0 0 30px rgba(0, 255, 204, 0.15);
-  border-radius: 14px;
-  border: 1px solid #1fe0d9;
+  max-width: 700px;
+  margin: 60px auto;
+  padding: 40px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
   text-align: center;
 }
 
 h1 {
-  font-size: 2rem;
+  font-size: 1.8rem;
   margin-bottom: 25px;
-  color: #1fe0d9;
-  letter-spacing: 1px;
-  text-shadow: 0 0 10px rgba(31, 224, 217, 0.5);
+  color: #3a3a3a;
 }
 
 input[type="text"] {
   width: 70%;
-  padding: 14px;
+  padding: 12px;
   font-size: 16px;
-  border: 1px solid #2ef2e5;
-  border-radius: 8px;
-  background-color: #1b1f2f;
-  color: #e8faff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 12px;
   outline: none;
-  margin-bottom: 10px;
-  transition: 0.3s ease;
 }
 
 input[type="text"]:focus {
-  border-color: #00ffee;
-  box-shadow: 0 0 8px #00ffee55;
+  border-color: #007bff;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
 }
 
 button {
-  padding: 12px 28px;
+  padding: 12px 24px;
   font-size: 16px;
-  background-color: #00ffee;
-  color: #090d16;
+  background-color: #007bff;
+  color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
+  margin-left: 10px;
   cursor: pointer;
   transition: background 0.3s ease;
-  margin-left: 10px;
 }
 
 button:hover {
-  background-color: #0cf5dc;
+  background-color: #0056b3;
 }
 
 .result {
-  margin-top: 25px;
+  margin-top: 30px;
   text-align: left;
-  background-color: #161b28;
+  background-color: #f1f3f5;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 8px;
+  font-family: monospace;
+  border-left: 4px solid #007bff;
   overflow-x: auto;
-  color: #c6f4ff;
-  font-family: 'Courier New', Courier, monospace;
-  border-left: 5px solid #00ffee;
 }
 
 .error {
-  color: #ff6b6b;
+  color: #dc3545;
   font-weight: bold;
-  margin-top: 12px;
+  margin-top: 16px;
 }
+
 .leaflet-container {
   width: 100%;
-  border-radius: 12px;
-  margin-top: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
 }
