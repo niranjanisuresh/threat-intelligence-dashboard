@@ -11,7 +11,8 @@ function App() {
   const [geoData, setGeoData] = useState(null);
   const [error, setError] = useState("");
 
-  const API_URL = "https://threat-intelligence-dashboard01.onrender.com";
+  const API_URL = "http://127.0.0.1:5000";
+;
 
   const getThreatLevel = (score) => {
     if (score >= 80) return "High";
@@ -26,7 +27,7 @@ function App() {
   };
 
   const handleCheck = async () => {
-    if (!inputIP) {
+    if (!inputIP.trim()) {
       setError("Please enter an IP address.");
       return;
     }
@@ -38,12 +39,15 @@ function App() {
     try {
       const [threatRes, geoRes] = await Promise.all([
         axios.get(`${API_URL}/check_ip`, { params: { ip: inputIP } }),
-        axios.get(`${API_URL}/geolocate?ip=${inputIP}`) // Proxied via Flask to avoid HTTPS/HTTP conflicts
+        axios.get(`${API_URL}/geolocate`, { params: { ip: inputIP } })
       ]);
-      setResult(threatRes.data.data);
+
+      if (threatRes.data?.data) {
+        setResult(threatRes.data.data);
+      }
       setGeoData(geoRes.data);
     } catch (err) {
-      console.error(err);
+      console.error("Geolocation Error:", err.response || err.message || err);
       setError("Error fetching data. Please check the IP and try again.");
     }
   };
@@ -51,6 +55,7 @@ function App() {
   return (
     <div className="container">
       <h1>🛡️ Threat Intelligence Dashboard</h1>
+
       <input
         type="text"
         placeholder="Enter IP address"
@@ -58,26 +63,33 @@ function App() {
         onChange={(e) => setInputIP(e.target.value)}
       />
       <button onClick={handleCheck}>Check</button>
+
       {error && <p className="error">{error}</p>}
 
       {result && (
         <div className="result">
-          <h3>Lookup Result</h3>
+          <h3>IP Reputation Result</h3>
           <p><strong>IP:</strong> {result.ipAddress}</p>
           <p><strong>Domain:</strong> {result.domain || "N/A"}</p>
           <p><strong>ISP:</strong> {geoData?.isp || "N/A"}</p>
-          <p><strong>Country:</strong> {geoData?.country}
+          <p>
+            <strong>Country:</strong> {geoData?.country}
             {geoData?.countryCode && (
               <img
                 src={`https://flagcdn.com/24x18/${geoData.countryCode.toLowerCase()}.png`}
                 alt="flag"
-                style={{ marginLeft: 8, verticalAlign: "middle" }}
+                style={{ marginLeft: "8px", verticalAlign: "middle" }}
               />
             )}
           </p>
           <p>
             <strong>Abuse Score:</strong>{" "}
-            <span style={{ fontWeight: "bold", color: getThreatColor(result.abuseConfidenceScore) }}>
+            <span
+              style={{
+                color: getThreatColor(result.abuseConfidenceScore),
+                fontWeight: "bold"
+              }}
+            >
               {result.abuseConfidenceScore} ({getThreatLevel(result.abuseConfidenceScore)})
             </span>
           </p>
@@ -86,6 +98,7 @@ function App() {
             <MapContainer
               center={[geoData.lat, geoData.lon]}
               zoom={5}
+              scrollWheelZoom={false}
               style={{ height: "300px", marginTop: "20px", borderRadius: "10px" }}
             >
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
@@ -97,9 +110,9 @@ function App() {
                 })}
               >
                 <Popup>
-                  IP: {inputIP}  
+                  IP: {inputIP}
                   <br />
-                  Country: {geoData.country}
+                  Country: {geoData?.country}
                 </Popup>
               </Marker>
             </MapContainer>
