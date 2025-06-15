@@ -11,8 +11,10 @@ function App() {
   const [geoData, setGeoData] = useState(null);
   const [error, setError] = useState("");
 
-  const API_URL = "http://127.0.0.1:5000";
-;
+   "const BACKEND_URL = "https://your-backend.onrender.com";
+   fetch(`${BACKEND_URL}/check_ip?ip=${ip}`);
+
+
 
   const getThreatLevel = (score) => {
     if (score >= 80) return "High";
