@@ -1,23 +1,39 @@
-from flask import Flask, jsonify, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
+import requests
+import os
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://threat-intelligence-dashboard.vercel.app"])
 
-@app.route('/')
+ABUSEIPDB_API_KEY = os.getenv("ABUSEIPDB_API_KEY")
+
+@app.route("/")
 def home():
     return "Threat Intelligence API is live!"
 
-@app.route('/check_ip')
+@app.route("/check_ip", methods=["GET"])
 def check_ip():
-    ip = request.args.get('ip')
+    ip = request.args.get("ip")
     if not ip:
-        return jsonify({"error": "No IP provided"}), 400
-    return jsonify({
-        "ip": ip,
-        "threat_level": "Low",  # Replace with real threat data
-        "message": "No known issues with this IP."
-    })
+        return jsonify({"error": "IP address is required"}), 400
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    try:
+        response = requests.get(
+            "https://api.abuseipdb.com/api/v2/check",
+            headers={
+                "Key": ABUSEIPDB_API_KEY,
+                "Accept": "application/json"
+            },
+            params={
+                "ipAddress": ip,
+                "maxAgeInDays": 90
+            }
+        )
+        response.raise_for_status()
+        return jsonify(response.json())
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == "__main__":
+    app.run(debug=True)

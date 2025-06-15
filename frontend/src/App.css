@@ -76,3 +76,8 @@ button:hover {
   font-weight: bold;
   margin-top: 12px;
 }
+.leaflet-container {
+  width: 100%;
+  border-radius: 12px;
+  margin-top: 15px;
+}
