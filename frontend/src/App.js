@@ -1,127 +1,49 @@
-import React, { useState } from "react";
-import axios from "axios";
-import "./App.css";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
+import React, { useState } from 'react'
+import axios from 'axios'
+import 'bootstrap/dist/css/bootstrap.min.css'
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000'
 
 function App() {
-  const [inputIP, setInputIP] = useState("");
-  const [result, setResult] = useState(null);
-  const [geoData, setGeoData] = useState(null);
-  const [error, setError] = useState("");
-
-  const API_URL = "https://threat-intelligence-dashboard01.onrender.com";
-
-  const getThreatLevel = (score) => {
-    if (score >= 80) return "High";
-    if (score >= 30) return "Medium";
-    return "Low";
-  };
-
-  const getThreatColor = (score) => {
-    if (score >= 80) return "#ff4d4d";
-    if (score >= 30) return "#ffa500";
-    return "#4caf50";
-  };
+  const [ip, setIp] = useState('')
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleCheck = async () => {
-    if (!inputIP.trim()) {
-      setError("Please enter an IP address.");
-      return;
-    }
-
-    setError("");
-    setResult(null);
-    setGeoData(null);
-
-    try {
-      const [threatRes, geoRes] = await Promise.all([
-        axios.get(`${API_URL}/check_ip`, { params: { ip: inputIP } }),
-        axios.get(`${API_URL}/geolocate`, { params: { ip: inputIP } }),
-      ]);
-
-      if (threatRes.data && threatRes.data.data) {
-        setResult(threatRes.data.data);
-      }
-      setGeoData(geoRes.data);
-    } catch (err) {
-      console.error("Geolocation Error:", err.response || err.message || err);
-      setError("Error fetching data. Please check the IP and try again.");
-    }
-  };
+    // …your async fetch/axios logic here…
+  }
 
   return (
-    <div className="container">
-      <h1>🛡️ Threat Intelligence Dashboard</h1>
-
+    <div className="container mt-5">
+      {/* 1) Your input field */}
       <input
         type="text"
-        placeholder="Enter IP address"
-        value={inputIP}
-        onChange={(e) => setInputIP(e.target.value)}
+        value={ip}
+        onChange={e => setIp(e.target.value)}
+        placeholder="Enter IP (e.g. 8.8.8.8)"
+        className="form-control mb-3"
+        style={{ maxWidth: '300px' }}
       />
-      <button onClick={handleCheck}>Check</button>
+      <button onClick={handleCheck} disabled={loading}>
+  {loading ? 'Checking…' : 'Check'}
+</button>
 
-      {error && <p className="error">{error}</p>}
 
-      {result && (
-        <div className="result">
-          <h3>IP Reputation Result</h3>
-          <p><strong>IP:</strong> {result.ipAddress}</p>
-          <p><strong>Domain:</strong> {result.domain || "N/A"}</p>
-          <p><strong>ISP:</strong> {geoData?.isp || "N/A"}</p>
-          <p>
-            <strong>Country:</strong> {geoData?.country}
-            {geoData?.countryCode && (
-              <img
-                src={`https://flagcdn.com/24x18/${geoData.countryCode.toLowerCase()}.png`}
-                alt="flag"
-                style={{ marginLeft: "8px", verticalAlign: "middle" }}
-              />
-            )}
-          </p>
-          <p>
-            <strong>Abuse Score:</strong>{" "}
-            <span
-              style={{
-                color: getThreatColor(result.abuseConfidenceScore),
-                fontWeight: "bold",
-              }}
-            >
-              {result.abuseConfidenceScore} ({getThreatLevel(result.abuseConfidenceScore)})
-            </span>
-          </p>
+      {/* 2) ← Include the button right here, inside the return’s JSX */}
+      <button
+        className="btn btn-primary"
+        onClick={handleCheck}      {/* ← this wires the click to your function */}
+        disabled={loading}
+      >
+        {loading ? 'Checking…' : 'Check'}
+      </button>
 
-          {geoData?.lat && geoData?.lon && (
-            <MapContainer
-              center={[geoData.lat, geoData.lon]}
-              zoom={5}
-              scrollWheelZoom={false}
-              style={{ height: "300px", marginTop: "20px", borderRadius: "10px" }}
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <Marker
-                position={[geoData.lat, geoData.lon]}
-                icon={L.icon({
-                  iconUrl: "https://cdn-icons-png.flaticon.com/512/252/252025.png",
-                  iconSize: [30, 30],
-                })}
-              >
-                <Popup>
-                  IP: {inputIP}
-                  <br />
-                  Country: {geoData?.country}
-                </Popup>
-              </Marker>
-            </MapContainer>
-          )}
-        </div>
-      )}
+      {/* 3) Your error & data display */}
+      {error && <p className="text-danger mt-3">{error}</p>}
+      {data && <pre className="mt-3">{JSON.stringify(data, null, 2)}</pre>}
     </div>
-  );
+  )
 }
 
 export default App;

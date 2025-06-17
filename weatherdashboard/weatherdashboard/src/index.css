@@ -1,0 +1,67 @@
+:root {
+  /* Neutrals */
+  --bg: #f9fafb;
+  --bg-alt: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+
+  /* Accents */
+  --primary: #3b82f6;     /* soft blue */
+  --primary-light: #60a5fa;
+  --primary-dark: #2563eb;
+
+  --highlight: #10b981;   /* emerald green */
+  --warning: #f59e0b;     /* amber */
+  --danger: #ef4444;      /* red */
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+  padding: 2rem;
+}
+
+h1, h2, h3 {
+  color: var(--primary-dark);
+  margin-bottom: 1rem;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.card {
+  background-color: var(--bg-alt);
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  animation: fadeIn 0.5s ease-out;
+}
+
+button {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+button:hover {
+  background-color: var(--primary-dark);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
